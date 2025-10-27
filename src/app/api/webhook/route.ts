@@ -46,11 +46,27 @@ export async function POST(request: NextRequest) {
     }
 
     // REAL-TIME UPDATE: Notify the frontend via WebSocket
-    if ((global as any).emitPaymentUpdate) {
-      (global as any).emitPaymentUpdate(payment.id, newStatus);
-      console.log(`Emitted WebSocket update for payment ${payment.id} with status ${newStatus}`);
-    } else {
-      console.warn("emitPaymentUpdate function not available on global object");
+    // Since we're using a separate socket server, we need to make an HTTP request to it
+    try {
+      const socketServerUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+      const response = await fetch(`${socketServerUrl}/emit-payment-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentId: payment.id,
+          status: newStatus
+        }),
+      });
+
+      if (response.ok) {
+        console.log(`✅ Emitted WebSocket update for payment ${payment.id} with status ${newStatus}`);
+      } else {
+        console.warn(`❌ Failed to emit WebSocket update: ${response.status}`);
+      }
+    } catch (error) {
+      console.warn("❌ Error emitting WebSocket update:", error);
     }
 
     return NextResponse.json({ message: "Webhook processed." }, { status: 200 });

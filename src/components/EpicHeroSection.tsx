@@ -134,13 +134,13 @@ export default function HeroSection() {
 
       
       <div className="max-w-7xl lg:max-w-[90%] mx-auto grid lg:grid-cols-2 gap-12 items-center px-6">
-        <motion.div key={`text-${key}`} variants={container} initial="hidden" animate="visible" className="space-y-6 z-10 overflow-hidden p-20">
-          <motion.p variants={zoomOut} className="text-base tracking-wider text-gray-600 md:text-3xl font-roboto">
+        <motion.div key={`text-${key}`} variants={container} initial="hidden" animate="visible" className="space-y-6 z-10 overflow-hidden">
+          <motion.p variants={zoomOut} className="text-base tracking-wider text-gray-600 md:text-3xl font-roboto max-w-full">
             {currentSlideData.subtitle}
           </motion.p>
 
-          <motion.h1 variants={zoomOut} className="text-5xl sm:text-6xl lg:text-8xl font-light tracking-wide leading-tight">
-            <span className="text-gray-900 font-roboto lg:text-[80px]">{currentSlideData.title}</span>
+          <motion.h1 variants={zoomOut} className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-wide leading-tight max-w-full">
+            <span className="text-gray-900 font-roboto lg:text-[70px]">{currentSlideData.title}</span>
             <br />
             <span className="font-extrabold text-black font-roboto">{currentSlideData.titleBold}</span>
           </motion.h1>
@@ -188,7 +188,7 @@ export default function HeroSection() {
           variants={imageVariants}
           initial="hidden"
           animate="visible"
-          className="relative flex justify-center items-center flex-1"
+          className="relative flex justify-center items-center"
         >
           <motion.div className="absolute -top-20 -right-24 w-[600px] h-[600px] z-0" animate={contourAnimation}>
             <Image src="/herosection/contourlines.png" alt="" fill className="object-contain opacity-50" />
@@ -199,7 +199,7 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Watch image */}
-          <motion.div animate={floatAnimation} className="relative w-full h-[500px] z-10 lg:h-[700px]">
+          <motion.div animate={floatAnimation} className="relative w-full h-[500px] z-10 ">
             <Image
               src={currentSlideData.image}
               alt="Smartwatches"

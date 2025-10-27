@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Smartphone } from "lucide-react";
 import { toast } from "sonner";
+import { getSocket, registerForPaymentUpdates, onPaymentUpdate, offPaymentUpdate } from "@/lib/socket";
 
 interface PaypackPaymentButtonProps {
   amount: number;
@@ -24,38 +24,29 @@ export default function PaypackPaymentButton({
   const [isProcessing, setIsProcessing] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [paymentId, setPaymentId] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    // Connect to WebSocket server when the component mounts
-    const newSocket = io(window.location.origin);
-    setSocket(newSocket);
+    const handlePaymentUpdate = (data: { status: "SUCCESSFUL" | "FAILED" }) => {
+      console.log("Received payment update:", data);
+      setIsProcessing(false);
 
-    newSocket.on("connect", () => console.log("Socket connected!"));
-
-    // Listen for payment updates from the backend
-    newSocket.on(
-      "payment:update",
-      (data: { status: "SUCCESSFUL" | "FAILED" }) => {
-        console.log("Received payment update:", data);
-        setIsProcessing(false); // Stop loading immediately
-
-        if (data.status === "SUCCESSFUL") {
-          toast.success("Payment successful!");
-          setPaymentId(null);
-          setPhoneNumber(""); // Reset for next use
-          onSuccess?.();
-        } else {
-          toast.error("Payment failed. Please try again.");
-          setPaymentId(null);
-          setPhoneNumber(""); // Reset for retry
-          onError?.("Payment was not approved or failed.");
-        }
+      if (data.status === "SUCCESSFUL") {
+        toast.success("Payment successful!");
+        setPaymentId(null);
+        setPhoneNumber("");
+        onSuccess?.();
+      } else {
+        toast.error("Payment failed. Please try again.");
+        setPaymentId(null);
+        setPhoneNumber("");
+        onError?.("Payment was not approved or failed.");
       }
-    );
+    };
+
+    onPaymentUpdate(handlePaymentUpdate);
 
     return () => {
-      newSocket.disconnect();
+      offPaymentUpdate(handlePaymentUpdate);
     };
   }, [onSuccess, onError]);
 
@@ -96,11 +87,8 @@ export default function PaypackPaymentButton({
       setPaymentId(newPaymentId);
 
       // Register this payment with the WebSocket server
-      if (socket && newPaymentId) {
-        socket.emit("registerPayment", newPaymentId);
-        console.log(`Registered payment ID ${newPaymentId} with socket ${socket.id}.`);
-      } else {
-        console.warn("Socket not connected or payment ID missing:", { socket: !!socket, paymentId: newPaymentId });
+      if (newPaymentId) {
+        registerForPaymentUpdates(newPaymentId);
       }
 
       // Payment initiated successfully
