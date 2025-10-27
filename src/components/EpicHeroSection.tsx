@@ -42,7 +42,7 @@ export default function HeroSection() {
       subtitle: "Be online always and anywhere",
       title: "For All Seasons",
       titleBold: "Any Circumstances",
-      image: "/herosection/phone.png"
+      image: "/herosection/kt_pad.png"
     }
   ]
 
@@ -132,55 +132,7 @@ export default function HeroSection() {
         <WhatsApp className="w-7 h-7 text-white" />
       </motion.a>
 
-      {/* <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="fixed right-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-50"
-      >
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Download"
-        >
-          <Download className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Documents"
-        >
-          <FileText className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Video"
-        >
-          <Video className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Messages"
-        >
-          <MessageCircle className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Favorites"
-        >
-          <Heart className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Share"
-        >
-          <Share2 className="w-5 h-5 text-gray-600" />
-        </button>
-
-        <div className="mt-8 flex flex-col items-center gap-2">
-          <div className="w-px h-16 bg-gray-300"></div>
-          <p className="text-xs text-gray-600 [writing-mode:vertical-lr] tracking-wider">scroll down</p>
-        </div>
-      </motion.div> */}
-
+      
       <div className="max-w-7xl lg:max-w-[90%] mx-auto grid lg:grid-cols-2 gap-12 items-center px-6">
         <motion.div key={`text-${key}`} variants={container} initial="hidden" animate="visible" className="space-y-6 z-10 overflow-hidden p-20">
           <motion.p variants={zoomOut} className="text-base tracking-wider text-gray-600 md:text-3xl font-roboto">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Youtube, Twitter, InstagramIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -42,34 +42,10 @@ const data = {
 
 const socialLinks = [
   {
-    icon: Facebook,
-    label: "Facebook",
-    href: data.facebookLink,
-    color: "bg-blue-600",
-  },
-  {
-    icon: Twitter,
-    label: "Twitter",
-    href: data.twitterLink,
-    color: "bg-sky-500",
-  },
-  {
-    icon: Instagram,
+    icon: <InstagramIcon />,
     label: "Instagram",
     href: data.instaLink,
     color: "bg-pink-600",
-  },
-  {
-    icon: Linkedin,
-    label: "LinkedIn",
-    href: data.linkedinLink,
-    color: "bg-blue-700",
-  },
-  {
-    icon: Youtube,
-    label: "YouTube",
-    href: data.youtubeLink,
-    color: "bg-red-600",
   },
 ];
 
@@ -187,7 +163,7 @@ export default function Footer() {
                   width={100}
                   height={100}
                 />
-                <span className="text-xl font-bold text-white">
+                <span className="text-xl font-sans font-bold text-white">
                   {data.companyInfo.name}.
                 </span>
               </Link>
@@ -201,14 +177,14 @@ export default function Footer() {
                 <p className="font-bold -[#0B1A2D]">+250 788 123 456</p>
               </div>
               <div className="flex items-center gap-3 mt-6">
-                {socialLinks.map(({ icon: Icon, href, label, color }) => (
+                {socialLinks.map(({ icon, href, label, color }) => (
                   <Link
                     key={label}
                     href={href}
                     target="_blank"
                     className={`w-9 h-9 ${color} text-white rounded-lg flex items-center justify-center transition-colors shadow-sm hover:opacity-80`}
                   >
-                    <Icon className="w-4 h-4" />
+                    {icon}
                   </Link>
                 ))}
               </div>
