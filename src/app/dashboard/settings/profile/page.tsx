@@ -89,7 +89,7 @@ export default function UserProfilePage() {
 
   // Update form when profile loads
   useEffect(() => {
-    const profileData = profile?.data || profile;
+    const profileData = (profile as any)?.data || profile;
     if (profileData?.name !== undefined) {
       setProfileForm({
         name: profileData.name || "",
@@ -99,7 +99,7 @@ export default function UserProfilePage() {
     }
   }, [profile]);
 
-  const profileData = profile?.data || profile;
+  const profileData = (profile as any)?.data || profile;
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();

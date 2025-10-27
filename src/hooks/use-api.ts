@@ -49,7 +49,7 @@ export function useApi<T>(url: string | null, config?: SWRConfiguration) {
   }>(url, fetcher, config);
 
   return {
-    data: data?.success ? data.data : undefined,
+    data: data?.success ? (data.data || data.products || data) : (Array.isArray(data) ? data : null) as T,
     isLoading,
     isError: error,
     mutate,
@@ -77,15 +77,19 @@ export function useProducts(params?: {
     queryParams.toString() ? `?${queryParams.toString()}` : ""
   }`;
 
-  return useApi<{
-    products: any[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
-  }>(url);
+  const { data, isLoading, error, mutate } = useSWR(url, fetcher);
+  
+  console.log('Raw products API response:', data);
+  
+  return {
+    data: data?.success ? {
+      products: data.data?.products || data.products || [],
+      pagination: data.data?.pagination || data.pagination
+    } : null,
+    isLoading,
+    isError: error,
+    mutate,
+  };
 }
 
 export function useProduct(id: string | null) {
@@ -94,7 +98,13 @@ export function useProduct(id: string | null) {
 
 // Categories hooks
 export function useCategories() {
-  return useApi<any[]>("/api/categories");
+  const { data, isLoading, error, mutate } = useSWR("/api/categories", fetcher);
+  return {
+    data: data?.success ? (data.data || data.categories || []) : (Array.isArray(data) ? data : []),
+    isLoading,
+    isError: error,
+    mutate,
+  };
 }
 
 export function useCategory(id: string | null) {
@@ -103,7 +113,13 @@ export function useCategory(id: string | null) {
 
 // Brands hooks
 export function useBrands() {
-  return useApi<any[]>("/api/brands");
+  const { data, isLoading, error, mutate } = useSWR("/api/brands", fetcher);
+  return {
+    data: data?.success ? (data.data || data.brands || []) : (Array.isArray(data) ? data : []),
+    isLoading,
+    isError: error,
+    mutate,
+  };
 }
 
 export function useBrand(id: string | null) {
@@ -120,47 +136,17 @@ export function useOrders(params?: { page?: number; limit?: number }) {
     queryParams.toString() ? `?${queryParams.toString()}` : ""
   }`;
 
-  return useApi<{
-    orders: Array<{
-      id: string;
-      orderNumber: string;
-      customerName: string;
-      customerEmail: string;
-      customerPhone: string;
-      shippingAddress: string;
-      totalAmount: number;
-      status: string;
-      paymentStatus: string;
-      notes?: string | null;
-      createdAt: string;
-      updatedAt: string;
-      userId?: string | null;
-      user?: {
-        id: string;
-        email: string;
-        name: string | null;
-      } | null;
-      orderItems: Array<{
-        id: string;
-        name: string;
-        quantity: number;
-        price: number;
-        productId: string;
-        product: {
-          id: string;
-          name: string;
-          brand?: { name: string } | null;
-          category?: { name: string } | null;
-        };
-      }>;
-    }>;
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
-  }>(url);
+  const { data, isLoading, error, mutate } = useSWR(url, fetcher);
+  
+  return {
+    data: data?.success ? {
+      orders: data.data?.orders || data.orders || [],
+      pagination: data.data?.pagination || data.pagination
+    } : { orders: [], pagination: null },
+    isLoading,
+    isError: error,
+    mutate,
+  };
 }
 
 export function useOrder(id: string | null) {
@@ -170,6 +156,25 @@ export function useOrder(id: string | null) {
 // Current user hook
 export function useCurrentUser() {
   return useApi<any>("/api/auth/me");
+}
+
+// Profile hooks
+export function useProfile<T = any>() {
+  const { data, isLoading, error, mutate } = useSWR("/api/auth/me", fetcher);
+  return {
+    data: data?.success ? (data.data || data.user || data) : data as T,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+export function useUpdateProfile() {
+  return useSWRMutation("/api/auth/profile", updateRequest);
+}
+
+export function useChangePassword() {
+  return useSWRMutation("/api/auth/change-password", updateRequest);
 }
 
 // Cart hook
@@ -420,34 +425,7 @@ export function useDeleteAuditLog(id: string) {
   );
 }
 
-// Profile hooks
-export function useProfile<T = any>() {
-  return useApi<T>("/api/profile");
-}
 
-export function useUpdateProfile() {
-  return useSWRMutation("/api/profile", updateRequest);
-}
-
-export function useChangePassword() {
-  return useSWRMutation("/api/profile/password", async (url: string, { arg }: { arg: any }) => {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(arg),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to change password");
-    }
-
-    return response.json();
-  });
-}
 
 // Analytics hooks
 export function useAnalytics(period?: string) {

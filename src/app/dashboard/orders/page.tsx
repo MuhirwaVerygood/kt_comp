@@ -146,7 +146,7 @@ export default function OrdersPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-bold">Orders</h1>
-                  {data && (
+                  {data?.pagination && (
                     <p className="text-sm text-muted-foreground mt-1">
                       {data.pagination.total} total orders
                     </p>
@@ -265,7 +265,7 @@ export default function OrdersPage() {
                       </Table>
 
                       {/* Pagination */}
-                      {data.pagination.totalPages > 1 && (
+                      {data?.pagination && data.pagination.totalPages > 1 && (
                         <div className="flex items-center justify-between mt-4">
                           <p className="text-sm text-muted-foreground">
                             Page {data.pagination.page} of{" "}

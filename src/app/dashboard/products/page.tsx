@@ -134,8 +134,11 @@ export default function ProductsPage() {
     selectedProduct?.id || ""
   );
 
+  console.log('Products Data:', productsData);
   const products = productsData?.products || [];
   const pagination = productsData?.pagination;
+  console.log('Products:', products);
+  console.log('Pagination:', pagination);
 
   // Handlers
   const handleAddProduct = async (data: any) => {

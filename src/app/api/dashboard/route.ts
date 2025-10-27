@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
     // Get current period orders
+    console.log('Dashboard API: Date ranges - thirtyDaysAgo:', thirtyDaysAgo, 'now:', now);
     const currentOrders = await prisma.order.findMany({
       where: {
         createdAt: {
@@ -45,6 +46,8 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    console.log('Dashboard API: Current orders count:', currentOrders.length);
+    console.log('Dashboard API: Current orders:', currentOrders.map(o => ({ id: o.id, createdAt: o.createdAt, totalAmount: o.totalAmount })));
 
     // Get previous period orders for comparison
     const previousOrders = await prisma.order.findMany({
@@ -116,6 +119,7 @@ export async function GET(request: NextRequest) {
     // Get sales data by month (last 6 months)
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    console.log('Dashboard API: Six months ago:', sixMonthsAgo);
 
     const monthlySales = await prisma.order.findMany({
       where: {
@@ -128,6 +132,8 @@ export async function GET(request: NextRequest) {
         createdAt: true,
       },
     });
+    console.log('Dashboard API: Monthly sales count:', monthlySales.length);
+    console.log('Dashboard API: Monthly sales:', monthlySales.map(s => ({ totalAmount: s.totalAmount, createdAt: s.createdAt })));
 
     // Group by month
     const salesByMonth: { [key: string]: number } = {};
@@ -180,6 +186,8 @@ export async function GET(request: NextRequest) {
         orderItems: true,
       },
     });
+    console.log('Dashboard API: Recent orders count:', recentOrders.length);
+    console.log('Dashboard API: Recent orders:', recentOrders.map(o => ({ id: o.id, createdAt: o.createdAt, totalAmount: o.totalAmount })));
 
     const recentOrdersData = recentOrders.map((order) => ({
       id: order.id,
@@ -235,6 +243,28 @@ export async function GET(request: NextRequest) {
     const inventoryTurnover = totalInventory._sum.stockCount && totalInventory._sum.stockCount > 0
       ? totalSold / totalInventory._sum.stockCount
       : 0;
+
+    console.log('Dashboard API: Final response data:', {
+      overview: {
+        totalRevenue: currentRevenue,
+        revenueGrowth: parseFloat(revenueGrowth.toFixed(1)),
+        totalOrders: currentOrders.length,
+        ordersGrowth: parseFloat(ordersGrowth.toFixed(1)),
+        totalProducts,
+        productsGrowth: parseFloat(productsGrowth.toFixed(1)),
+        activeCustomers,
+        customersGrowth: parseFloat(customersGrowth.toFixed(1)),
+      },
+      salesData,
+      topProducts,
+      recentOrders: recentOrdersData,
+      performance: {
+        conversionRate: parseFloat(conversionRate.toFixed(1)),
+        averageOrderValue: Math.round(averageOrderValue),
+        customerRetention: parseFloat(customerRetention.toFixed(1)),
+        inventoryTurnover: parseFloat(inventoryTurnover.toFixed(1)),
+      },
+    });
 
     return successResponse({
       overview: {

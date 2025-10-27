@@ -85,8 +85,9 @@ export default function SearchDropdown({
       if (response.ok) {
         const data = await response.json();
         console.log("API response data:", data);
-        setProducts(data.products || []);
-        console.log("Products set:", data.products?.length || 0, "products");
+        const products = data.success ? (data.data?.products || data.products || []) : [];
+        setProducts(products);
+        console.log("Products set:", products.length, "products");
       }
     } catch (error) {
       console.error("Search error:", error);

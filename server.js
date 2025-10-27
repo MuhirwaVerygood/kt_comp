@@ -19,7 +19,7 @@ app.prepare().then(() => {
     const { Server } = require('socket.io');
     const io = new Server(server, {
       cors: {
-        origin: process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000",
+        origin: process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3001",
         methods: ["GET", "POST"]
       }
     });

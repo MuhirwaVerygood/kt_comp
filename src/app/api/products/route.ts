@@ -7,9 +7,14 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
+    const categoryId = searchParams.get("categoryId");
+    const brandId = searchParams.get("brandId");
+    const featured = searchParams.get("featured");
     const limit = parseInt(searchParams.get("limit") || "20");
     const page = parseInt(searchParams.get("page") || "1");
     const skip = (page - 1) * limit;
+
+    console.log('Products API: Query params:', { search, category, brand, categoryId, brandId, featured, limit, page });
 
     const where: any = {};
 
@@ -28,9 +33,24 @@ export async function GET(request: NextRequest) {
       where.category = { slug: category };
     }
 
+    // Category ID filter (for dashboard)
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
     // Brand filter
     if (brand) {
       where.brand = { slug: brand };
+    }
+
+    // Brand ID filter (for dashboard)
+    if (brandId) {
+      where.brandId = brandId;
+    }
+
+    // Featured filter
+    if (featured === "true") {
+      where.featured = true;
     }
 
     // For search dropdown, prioritize in-stock items
@@ -38,17 +58,23 @@ export async function GET(request: NextRequest) {
       where.inStock = true;
     }
 
+    console.log('Products API: Where clause:', where);
+
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
         select: {
           id: true,
           name: true,
+          description: true,
           image: true,
+          images: true,
           price: true,
           inStock: true,
           stockCount: true,
           featured: true,
+          rating: true,
+          model3dId: true,
           createdAt: true,
           brand: {
             select: {
@@ -77,14 +103,19 @@ export async function GET(request: NextRequest) {
       prisma.product.count({ where }),
     ]);
 
+    console.log('Products API: Found products count:', total);
+    console.log('Products API: Products:', products.map(p => ({ id: p.id, name: p.name, brand: p.brand?.name, category: p.category?.name })));
+
     return NextResponse.json({
       success: true,
-      products,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+      data: {
+        products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
     });
   } catch (error) {
@@ -110,7 +141,9 @@ export async function POST(request: NextRequest) {
       images,
       inStock,
       stockCount,
-      featured
+      featured,
+      rating,
+      reviewCount
     } = body;
 
     const product = await prisma.product.create({
@@ -126,6 +159,8 @@ export async function POST(request: NextRequest) {
         inStock: inStock ?? true,
         stockCount: parseInt(stockCount) || 0,
         featured: featured ?? false,
+        rating: rating ? parseFloat(rating) : 0,
+        reviewCount: reviewCount ? parseInt(reviewCount) : 0,
       },
       include: {
         brand: true,

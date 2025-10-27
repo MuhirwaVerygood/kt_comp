@@ -75,6 +75,8 @@ export default function ProductCard({
     product.oldPriceFormatted ||
     (oldPrice ? `RWF ${oldPrice.toLocaleString()}` : undefined);
   const description = product.description;
+  const truncatedName = name.length > 60 ? name.slice(0, 60) + '...' : name;
+  const truncatedDescription = description && description.length > 120 ? description.slice(0, 120) + '...' : description;
   const badge = product.badge || (product.featured ? "Featured" : undefined);
   const inStock = (product.stockQuantity ?? 0) > 0 || product.inStock !== false;
 
@@ -113,7 +115,7 @@ export default function ProductCard({
     <Link
       href={`/products/${product.id}`}
       className={cn(
-        "group relative block overflow-hidden rounded-2xl border border-gray-200 bg-background shadow-sm transition-all hover:shadow-lg",
+        "group relative block overflow-hidden rounded-2xl border border-gray-200 bg-background shadow-sm transition-all hover:shadow-lg h-[450px]",
         "focus-within:ring-2 focus-within:ring-blue-500",
         className
       )}
@@ -135,7 +137,7 @@ export default function ProductCard({
           alt={`${name} - ${brandName} ${categoryName} available at KT Computer Supply Rwanda`}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          className="object-cover h-full transition-transform duration-500 group-hover:scale-105"
+          className="object-contain h-full transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
           quality={85}
         />
@@ -165,7 +167,7 @@ export default function ProductCard({
       <div className="space-y-2 p-4">
         <div className="text-xs font-medium text-gray-500">{brandName}</div>
         <div className="line-clamp-2 text-sm font-semibold text-gray-900">
-          {name}
+          {truncatedName}
         </div>
 
         {/* Rating */}
@@ -191,8 +193,8 @@ export default function ProductCard({
         )}
 
         {/* Description */}
-        {description && (
-          <div className="text-xs text-gray-600">{description}</div>
+        {truncatedDescription && (
+          <div className="text-xs text-gray-600">{truncatedDescription}</div>
         )}
 
         {/* Price and Stock */}

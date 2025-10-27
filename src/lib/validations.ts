@@ -23,6 +23,8 @@ export const productSchema = z.object({
   images: z.array(z.string()).optional().default([]),
   model3dId: z.string().optional().nullable(),
   badge: z.string().optional().nullable(),
+  rating: z.number().min(0).max(5).optional().default(0),
+  reviewCount: z.number().int().min(0).optional().default(0),
   stockCount: z.number().int().min(0, "Stock count cannot be negative"),
   inStock: z.boolean().default(true),
   featured: z.boolean().default(false),
