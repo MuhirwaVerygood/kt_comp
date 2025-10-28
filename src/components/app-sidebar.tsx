@@ -21,6 +21,7 @@ import {
   Headphones,
   FileText,
   ReceiptText,
+  CreditCard,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -213,6 +214,16 @@ const data = {
       title: "Support",
       url: "/dashboard/support",
       icon: Headphones,
+    },
+    {
+      title: "Stripe Dashboard",
+      url: "https://dashboard.stripe.com/",
+      icon: TrendingUp,
+    },
+    {
+      title: "PayPack Dashboard",
+      url: "https://payments.paypack.rw/login",
+      icon: CreditCard,
     },
     {
       title: "Storefront",

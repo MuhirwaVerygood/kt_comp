@@ -33,9 +33,9 @@ export default function HeroSection() {
 
   const slides = [
     {
-      subtitle: "Skip the Impossible",
-      title: "Extraordinary",
-      titleBold: "Performance",
+      subtitle: "Skip the impossible.",
+      title: "Welcome To",
+      titleBold: "KT Computer supply",
       image: "/herosection/hero_pc.png"
     },
     {

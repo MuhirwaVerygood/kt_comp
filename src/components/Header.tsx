@@ -539,7 +539,6 @@ export default function Header() {
                   <Link
                     key={category.name}
                     href={category.href}
-                    onClick={(e) => handleCategoryClick(e, category)}
                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors focus:outline-none relative ${
                       isActive
                         ? "text-blue-600 font-semibold"
