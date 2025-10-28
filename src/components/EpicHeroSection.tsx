@@ -35,7 +35,7 @@ export default function HeroSection() {
     {
       subtitle: "Skip the impossible.",
       title: "Welcome To",
-      titleBold: "KT Computer supply",
+      titleBold: "KT Computer Supply",
       image: "/herosection/hero_pc.png"
     },
     {

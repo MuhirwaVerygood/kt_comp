@@ -493,11 +493,13 @@ export default function Header() {
                       </Link>
                       <button
                         onClick={() => {
-                          // Logout: clear localStorage and reset state
+                          // Logout: clear all auth data and reset state
                           localStorage.removeItem("auth_token");
+                          localStorage.removeItem("auth-token");
                           localStorage.removeItem("user");
                           setUser(null);
                           setIsUserMenuOpen(false);
+                          // Force page reload to ensure clean state
                           window.location.href = "/";
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"

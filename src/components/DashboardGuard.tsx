@@ -10,11 +10,11 @@ export function DashboardGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check if token exists in localStorage
-    const token = localStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth_token");
 
     if (!isLoading && (!token || !user)) {
       // No token or user, redirect to login
-      router.push("/dashboard/login");
+      router.push("/auth/login");
     } else if (!isLoading && user && user.role !== "ADMIN") {
       // User is not admin, redirect to home
       router.push("/");

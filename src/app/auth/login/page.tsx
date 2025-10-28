@@ -102,20 +102,16 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(data.data.user));
       }
 
-      setSuccess(true);
+      // Check user role for redirection
+      const userRole = data.data.user.role;
 
-      // Check if there's a redirect path stored
-      const redirectPath = localStorage.getItem("redirect_after_login");
-      
-      // Redirect after 1.5 seconds
-      setTimeout(() => {
-        if (redirectPath) {
-          localStorage.removeItem("redirect_after_login");
-          router.push(redirectPath);
-        } else {
-          router.push("/");
-        }
-      }, 1500);
+      if (userRole === "ADMIN") {
+        // Redirect admin to dashboard
+        router.push("/dashboard");
+      } else {
+        // For clients, redirect to home page
+        router.push("/");
+      }
     } catch (err: any) {
       setError(err.message || "Invalid email or password. Please try again.");
     } finally {

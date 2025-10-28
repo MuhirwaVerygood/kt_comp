@@ -4,7 +4,7 @@ import useSWRMutation from "swr/mutation";
 // Get token from localStorage
 const getToken = () => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("auth-token");
+    return localStorage.getItem("auth_token");
   }
   return null;
 };

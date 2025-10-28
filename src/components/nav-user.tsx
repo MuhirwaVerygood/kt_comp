@@ -38,20 +38,24 @@ export function NavUser() {
 
   const handleLogout = async () => {
     try {
-      // Clear token from localStorage
+      // Clear all auth tokens from localStorage
       localStorage.removeItem("auth-token");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user");
 
       // Call logout endpoint (optional, just for logging)
       await logout({});
 
       // Redirect to login
-      router.push("/dashboard/login");
+      router.push("/auth/login");
       router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
-      // Even if API call fails, still clear token and redirect
+      // Even if API call fails, still clear tokens and redirect
       localStorage.removeItem("auth-token");
-      router.push("/dashboard/login");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user");
+      router.push("/auth/login");
       router.refresh();
     }
   };
