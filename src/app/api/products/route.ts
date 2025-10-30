@@ -106,6 +106,18 @@ export async function GET(request: NextRequest) {
     console.log('Products API: Found products count:', total);
     console.log('Products API: Products:', products.map(p => ({ id: p.id, name: p.name, brand: p.brand?.name, category: p.category?.name })));
 
+    // For category pages, return featured and all products separately
+    if (category && !search) {
+      const featuredProducts = products.filter(p => p.featured);
+      const allProducts = products;
+
+      return NextResponse.json({
+        success: true,
+        featured: featuredProducts,
+        all: allProducts,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {

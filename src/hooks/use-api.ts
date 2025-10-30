@@ -60,6 +60,7 @@ export function useApi<T>(url: string | null, config?: SWRConfiguration) {
 export function useProducts(params?: {
   categoryId?: string;
   brandId?: string;
+  category?: string;
   featured?: boolean;
   search?: string;
   page?: number;
@@ -68,6 +69,7 @@ export function useProducts(params?: {
   const queryParams = new URLSearchParams();
   if (params?.categoryId) queryParams.set("categoryId", params.categoryId);
   if (params?.brandId) queryParams.set("brandId", params.brandId);
+  if (params?.category) queryParams.set("category", params.category);
   if (params?.featured) queryParams.set("featured", "true");
   if (params?.search) queryParams.set("search", params.search);
   if (params?.page) queryParams.set("page", params.page.toString());
@@ -83,8 +85,9 @@ export function useProducts(params?: {
   
   return {
     data: data?.success ? {
-      products: data.data?.products || data.products || [],
-      pagination: data.data?.pagination || data.pagination
+      products: data.data?.products || data.products || data.all || [],
+      pagination: data.data?.pagination || data.pagination,
+      featured: data.featured
     } : null,
     isLoading,
     isError: error,

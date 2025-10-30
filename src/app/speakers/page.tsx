@@ -1,82 +1,24 @@
+"use client";
+
 import Header from "@/components/Header";
-import WelcomeHeroSpeaker from "@/components/WelcomeHeroSpeaker";
 import ProductCard from "@/components/ProductCard";
-import FeaturedProductsCarousel from "@/components/FeaturedProductsCarousel";
-import { Suspense } from "react";
-import { prisma } from "@/lib/prisma";
 import Footer from "@/components/Footer";
-import { generateCategoryMetadata } from "@/lib/seo";
-import { Metadata } from "next";
 import Breadcrumbs from "@/components/SEO/Breadcrumbs";
+import { useFilter } from "@/contexts/FilterContext";
+import { useProducts } from "@/hooks/use-api";
 
-async function getSpeakerProducts() {
-  try {
-    const category = await prisma.category.findUnique({
-      where: { slug: "speakers" },
-    });
+export default function Page() {
+  const { selectedBrand } = useFilter();
+  const { data, isLoading } = useProducts({ category: "speakers" });
 
-    if (!category) return { featured: [], all: [] };
-
-    const [featured, all] = await Promise.all([
-      prisma.product.findMany({
-        where: { categoryId: category.id, featured: true },
-        include: {
-          brand: { select: { id: true, name: true, slug: true, logo: true } },
-          category: { select: { id: true, name: true, slug: true } },
-        },
-        take: 8,
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.product.findMany({
-        where: { categoryId: category.id },
-        include: {
-          brand: { select: { id: true, name: true, slug: true, logo: true } },
-          category: { select: { id: true, name: true, slug: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
-    ]);
-
-    return { featured, all };
-  } catch (error) {
-    console.error("Error fetching speaker products:", error);
-    return { featured: [], all: [] };
-  }
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const category = await prisma.category.findUnique({
-      where: { slug: "speakers" },
-    });
-
-    if (!category) {
-      return {
-        title: "Speakers & Audio - KT Computer Supply",
-        description: "Premium sound systems and portable speakers in Rwanda",
-      };
-    }
-
-    const products = await prisma.product.findMany({
-      where: { categoryId: category.id },
-      select: { id: true },
-    });
-
-    return generateCategoryMetadata(category, products);
-  } catch (error) {
-    console.error("Error generating metadata for speakers:", error);
-    return {
-      title: "Speakers & Audio - KT Computer Supply",
-      description: "Premium sound systems and portable speakers in Rwanda",
-    };
-  }
-}
-
-export default async function Page() {
-  const { featured, all } = await getSpeakerProducts();
   const breadcrumbItems = [
     { name: "Speakers & Audio", href: "/speakers" },
   ];
+
+  const products = data?.products || [];
+  const filteredProducts = selectedBrand
+    ? products.filter((p: any) => p.brand.slug === selectedBrand)
+    : products;
 
   return (
     <main>
@@ -84,15 +26,7 @@ export default async function Page() {
       <div className="container mx-auto px-4 py-4">
         <Breadcrumbs items={breadcrumbItems} />
       </div>
-      <Suspense
-        fallback={
-          <div className="h-screen flex items-center justify-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        }
-      >
-        {/* <WelcomeHeroSpeaker /> */}
-      </Suspense>
+      {/* <WelcomeHeroSpeaker /> */}
 
       {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="shop">
         <div className="flex items-end justify-between">
@@ -105,8 +39,8 @@ export default async function Page() {
             </p>
           </div>
         </div>
-        {featured.length > 0 ? (
-          <FeaturedProductsCarousel products={featured} />
+        {products.featured.length > 0 ? (
+          <FeaturedProductsCarousel products={products.featured} />
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-gray-500">No featured speakers available.</p>
@@ -120,13 +54,22 @@ export default async function Page() {
       >
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">All Speakers</h2>
-            <p className="text-sm text-gray-600">Browse the full catalog</p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {selectedBrand ? `${selectedBrand.charAt(0).toUpperCase() + selectedBrand.slice(1)} Speakers` : 'All Speakers'}
+            </h2>
+            <p className="text-sm text-gray-600">
+              {selectedBrand ? `Speakers from ${selectedBrand.charAt(0).toUpperCase() + selectedBrand.slice(1)}` : 'Browse the full catalog'}
+            </p>
           </div>
         </div>
-        {all.length > 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="mt-4 text-gray-500">Loading products...</p>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {all.map((p) => (
+            {filteredProducts.map((p: any) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

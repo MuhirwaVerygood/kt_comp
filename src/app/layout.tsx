@@ -6,6 +6,7 @@ import NProgressHandler from "@/components/NProgressHandler";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/contexts/CartContext";
+import { FilterProvider } from "@/contexts/FilterContext";
 import { Analytics } from "@vercel/analytics/next";
 
 const roboto = Roboto({
@@ -147,12 +148,14 @@ export default function RootLayout({
         className={`${roboto.variable} font-sans antialiased`}
       >
         <CartProvider>
-          <Suspense fallback={null}>
-            <NProgressProvider />
-          </Suspense>
-          <NProgressHandler />
-          {children}
-          <Toaster richColors />
+          <FilterProvider>
+            <Suspense fallback={null}>
+              <NProgressProvider />
+            </Suspense>
+            <NProgressHandler />
+            {children}
+            <Toaster richColors />
+          </FilterProvider>
         </CartProvider>
         <Analytics />
       </body>

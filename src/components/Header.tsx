@@ -20,6 +20,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { CartDrawer } from "./CartDrawer";
 import { brandData } from "../lib/brands";
 import { useCart } from "@/contexts/CartContext";
+import { useFilter } from "@/contexts/FilterContext";
 import SearchDropdown from "./SearchDropdown";
 
 const categories = [
@@ -50,8 +51,10 @@ export default function Header() {
   const [user, setUser] = useState<UserData | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { itemCount, setIsCartOpen } = useCart();
+  const { selectedBrand, setSelectedBrand } = useFilter();
 
   useEffect(() => {
     // Check if current path is a brand page
@@ -60,6 +63,11 @@ export default function Header() {
       setActiveBrand(brandSlug);
     } else {
       setActiveBrand(null);
+    }
+
+    // Clear selected brand when navigating to a different category
+    if (pathname && !pathname.startsWith("/brands/")) {
+      setSelectedBrand(null);
     }
   }, [pathname]);
 
@@ -141,6 +149,7 @@ export default function Header() {
   const getCurrentCategory = () => {
     if (pathname === "/") return "all";
     if (pathname?.startsWith("/computers")) return "computers";
+    if (pathname?.startsWith("/tablets")) return "tablets";
     if (pathname?.startsWith("/phones")) return "phones";
     if (pathname?.startsWith("/printers")) return "printers";
     if (pathname?.startsWith("/routers")) return "routers";
@@ -159,11 +168,33 @@ export default function Header() {
       ? brandData
       : brandData.filter((brand) => brand.categories.includes(currentCategory));
 
-  // Map brands with active state
-  const brands = filteredBrandData.map((brand) => ({
-    ...brand,
-    active: activeBrand === brand.href.split("/").pop(),
-  }));
+  // Map brands with dynamic href and active state
+  const brands = filteredBrandData.map((brand) => {
+    const brandSlug = brand.href.split("/").pop();
+    let href = brand.href; // Default to brand page
+    let active = false;
+    let onClick = undefined;
+
+    if (currentCategory !== "all") {
+      // On category pages, use client-side filtering
+      href = "#"; // Prevent navigation
+      onClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setSelectedBrand(selectedBrand === brandSlug ? null : brandSlug || null);
+      };
+      active = selectedBrand === brandSlug;
+    } else {
+      // On homepage, use brand pages
+      active = activeBrand === brandSlug;
+    }
+
+    return {
+      ...brand,
+      href,
+      active,
+      onClick,
+    };
+  });
 
   // Map categories with active state based on pathname
   const activeCategories = categories.map((category) => ({
@@ -573,6 +604,7 @@ export default function Header() {
                   <Link
                     key={brand.name}
                     href={brand.href}
+                    onClick={brand.onClick}
                     id={brand.active ? "active-brand" : ""}
                     className={`inline-flex items-center px-3 py-1.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all ${
                       isActive

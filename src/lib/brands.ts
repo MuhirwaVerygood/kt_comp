@@ -1,9 +1,77 @@
+// Database brands data
+interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  productCount: number;
+  products: Array<{
+    name: string;
+    category: string;
+  }>;
+}
+
+interface Category {
+  name: string;
+  slug: string;
+  productCount: number;
+  brandSlugs: string[];
+}
+
+// Transform database brands to header format
+export function transformBrandsData(brands: Brand[], categories: Category[]) {
+  return brands
+    .filter(brand => brand.productCount > 0)
+    .map(brand => {
+      const brandCategories = categories
+        .filter(cat => cat.brandSlugs.includes(brand.slug))
+        .map(cat => cat.slug);
+      
+      return {
+        name: brand.name,
+        href: `/brands/${brand.slug}`,
+        logo: `/brands/${brand.slug}.png`,
+        categories: brandCategories,
+      };
+    });
+}
+
+// Updated brand data based on database
 export const brandData = [
   {
     name: "Apple",
     href: "/brands/apple",
     logo: "/brands/apple.png",
-    categories: ["computers"],
+    categories: ["computers", "tablets"],
+  },
+  {
+    name: "Asus",
+    href: "/brands/asus",
+    logo: "/brands/asus.png",
+    categories: ["routers"],
+  },
+  {
+    name: "BenQ",
+    href: "/brands/benq",
+    logo: "/brands/benq.png",
+    categories: ["monitors"],
+  },
+  {
+    name: "Bose",
+    href: "/brands/bose",
+    logo: "/brands/bose.png",
+    categories: ["speakers"],
+  },
+  {
+    name: "Brother",
+    href: "/brands/brother",
+    logo: "/brands/brother.png",
+    categories: ["printers"],
+  },
+  {
+    name: "Canon",
+    href: "/brands/canon",
+    logo: "/brands/canon.png",
+    categories: ["printers"],
   },
   {
     name: "Dell",
@@ -15,121 +83,6 @@ export const brandData = [
     name: "HP",
     href: "/brands/hp",
     logo: "/brands/hp.png",
-    categories: ["computers", "printers"],
-  },
-  {
-    name: "Lenovo",
-    href: "/brands/lenovo",
-    logo: "/brands/lenovo.png",
-    categories: ["computers"],
-  },
-  {
-    name: "Asus",
-    href: "/brands/asus",
-    logo: "/brands/asus.png",
-    categories: ["computers", "monitors", "routers"],
-  },
-  {
-    name: "Acer",
-    href: "/brands/acer",
-    logo: "/brands/acer.png",
-    categories: ["computers", "monitors"],
-  },
-  {
-    name: "Samsung",
-    href: "/brands/samsung",
-    logo: "/brands/samsung.png",
-    categories: [, "monitors"],
-  },
-  {
-    name: "Canon",
-    href: "/brands/canon",
-    logo: "/brands/canon.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Epson",
-    href: "/brands/epson",
-    logo: "/brands/epson.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Brother",
-    href: "/brands/brother",
-    logo: "/brands/brother.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Google",
-    href: "/brands/google",
-    logo: "/brands/google.png",
-    categories: [, "routers"],
-  },
-
-  {
-    name: "SpaceX",
-    href: "/brands/spacex",
-    logo: "/brands/spacex.png",
-    categories: ["routers"],
-  },
-  {
-    name: "TP-Link",
-    href: "/brands/tp-link",
-    logo: "/brands/tp-link.png",
-    categories: ["routers"],
-  },
-  {
-    name: "Netgear",
-    href: "/brands/netgear",
-    logo: "/brands/netgear.png",
-    categories: ["routers"],
-  },
-  {
-    name: "Linksys",
-    href: "/brands/linksys",
-    logo: "/brands/linksys.png",
-    categories: ["routers"],
-  },
-  {
-    name: "D-Link",
-    href: "/brands/d-link",
-    logo: "/brands/d-link.png",
-    categories: ["routers"],
-  },
-  {
-    name: "Mercusys",
-    href: "/brands/mercusys",
-    logo: "/brands/mercusys.png",
-    categories: ["routers"],
-  },
-  {
-    name: "Tenda",
-    href: "/brands/tenda",
-    logo: "/brands/tenda.png",
-    categories: ["routers"],
-  },
-  {
-    name: "Xerox",
-    href: "/brands/xerox",
-    logo: "/brands/xerox.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Ricoh",
-    href: "/brands/ricoh",
-    logo: "/brands/ricoh.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Pantum",
-    href: "/brands/pantum",
-    logo: "/brands/pantum.png",
-    categories: ["printers"],
-  },
-  {
-    name: "Kyocera",
-    href: "/brands/kyocera",
-    logo: "/brands/kyocera.png",
     categories: ["printers"],
   },
   {
@@ -139,63 +92,45 @@ export const brandData = [
     categories: ["speakers"],
   },
   {
+    name: "LG",
+    href: "/brands/lg",
+    logo: "/brands/lg.png",
+    categories: ["monitors"],
+  },
+  {
+    name: "Lenovo",
+    href: "/brands/lenovo",
+    logo: "/brands/lenovo.png",
+    categories: ["computers"],
+  },
+  {
+    name: "Modio",
+    href: "/brands/modio",
+    logo: "/brands/modio.png",
+    categories: ["tablets"],
+  },
+  {
+    name: "Samsung",
+    href: "/brands/samsung",
+    logo: "/brands/samsung.png",
+    categories: ["monitors"],
+  },
+  {
     name: "Sony",
     href: "/brands/sony",
     logo: "/brands/sony.png",
     categories: ["speakers"],
   },
   {
-    name: "Bose",
-    href: "/brands/bose",
-    logo: "/brands/bose.png",
-    categories: ["speakers"],
+    name: "TP-Link",
+    href: "/brands/tp-link",
+    logo: "/brands/tp-link.png",
+    categories: ["routers"],
   },
   {
-    name: "Marshall",
-    href: "/brands/marshall",
-    logo: "/brands/marshall.png",
-    categories: ["speakers"],
-  },
-  {
-    name: "Ultimate Ears",
-    href: "/brands/ultimate-ears",
-    logo: "/brands/ultimate-ears.png",
-    categories: ["speakers"],
-  },
-  {
-    name: "Sonos",
-    href: "/brands/sonos",
-    logo: "/brands/sonos.png",
-    categories: ["speakers"],
-  },
-  {
-    name: "Anker",
-    href: "/brands/anker",
-    logo: "/brands/anker.png",
-    categories: ["speakers"],
-  },
-  {
-    name: "LG",
-    href: "/brands/lg",
-    logo: "/brands/lg.png",
-    categories: ["speakers", "monitors"],
-  },
-  {
-    name: "BenQ",
-    href: "/brands/benq",
-    logo: "/brands/benq.png",
-    categories: ["monitors"],
-  },
-  {
-    name: "MSI",
-    href: "/brands/msi",
-    logo: "/brands/msi.png",
-    categories: ["monitors"],
-  },
-  {
-    name: "Gigabyte",
-    href: "/brands/gigabyte",
-    logo: "/brands/gigabyte.png",
-    categories: ["monitors"],
+    name: "Xerox",
+    href: "/brands/xerox",
+    logo: "/brands/xerox.png",
+    categories: ["printers"],
   },
 ];
