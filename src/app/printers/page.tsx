@@ -27,7 +27,7 @@ export default function Page() {
       <div className="container mx-auto px-4 py-4">
         <Breadcrumbs items={breadcrumbItems} />
       </div>
-      <WelcomeHeroPrinter />
+      
 
       {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="shop">
         <div className="flex items-end justify-between">
@@ -82,6 +82,9 @@ export default function Page() {
           </div>
         )}
       </div>
+
+      <WelcomeHeroPrinter />
+
       <Footer />
     </main>
   );
