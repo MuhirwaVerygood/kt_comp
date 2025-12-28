@@ -199,7 +199,7 @@ export default function Page() {
                             <YAxis />
                             <Tooltip
                               formatter={(value) => [
-                                `RWF ${value.toLocaleString()}`,
+                                `RWF ${(value ?? 0).toLocaleString()}`,
                                 "Revenue",
                               ]}
                               labelFormatter={(label) => `Month: ${label}`}
