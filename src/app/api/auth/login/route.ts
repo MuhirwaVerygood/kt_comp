@@ -7,6 +7,7 @@ import { successResponse, errorResponse } from '@/lib/api-response';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    console.log("Reached here");
     
     // Validate input
     const validation = loginSchema.safeParse(body);
